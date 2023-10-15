@@ -138,7 +138,11 @@ export default class Player {
         }
     };
     creditKill(address: string) {
-
+        if (this.game.bounties.has(address)) {
+            const amount = this.game.bounties.get(address);
+            sendSol(this.address, amount * 0.95);
+            this.game.bounties.delete(address);
+        }
         this.points += 1000;
         this.onKill(address);
     }

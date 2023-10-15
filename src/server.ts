@@ -167,6 +167,7 @@ async function main() {
             });
             io.to(game[0]).emit("recieveLeaderboard", game[1].getLeaderboard());
             io.to(game[0]).emit("recieveMessages", game[1].getRecentMessages());
+            io.to(game[0]).emit("recieveBounties", game[1].getBounties());
         }
     }, 1000 / 60);
     io.on("connection", async (socket) => {
@@ -221,9 +222,18 @@ async function main() {
         });
         socket.on("updateNFT", (data: { nft: string, newMetadata: NFTMetadata; }) => {
             console.log("recieved: ", data);
-            updateNFT(data.nft, data.newMetadata).finally(() => {
+            updateNFT(data.nft, data.newMetadata).then(() => {
                 socket.emit("updateNFT");
-            });
+            }).catch(() => socket.emit("updateNFT"));
+        });
+        socket.on("createNFT", (data: { account: string, metadata: NFTMetadata; }) => {
+            createNFT(data.metadata.image, data.account, data.metadata, 1).then((nft) => {
+                socket.emit("createNFT", nft);
+            }).catch(() => socket.emit("createNFT"));
+        });
+        socket.on("createBounty", (data: { address: string, target: string, amount: number; }) => {
+            const game = games.get(gameId)!;
+            game.createBounty(data.target, data.amount);
         });
         socket.on("move", (data: { pos: [number, number]; dimensions: [number, number], address: string; down: string[]; }) => {
             if (data.address) {

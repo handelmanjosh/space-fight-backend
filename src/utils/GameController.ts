@@ -21,6 +21,7 @@ export default class GameController {
     sockets: Socket[];
     type: string;
     gamemode: string;
+    bounties: Map<string, number> = new Map<string, number>();
     constructor(type: string, gamemode: string) {
         this.gamemode = gamemode === "casual" ? gamemode + (new Date()).toString() : gamemode;
         this.type = type;
@@ -34,6 +35,10 @@ export default class GameController {
         this.canGenAsteroid = true;
         this.canGenAI = true;
         this.messages = new Map<number, string[]>();
+        this.bounties = new Map<string, number>();
+    }
+    createBounty(address: string, amount: number) {
+        this.bounties.set(address, (this.bounties.get(address) || 0) + amount);
     }
     addPlayer(player: Player, socket: Socket) {
         this.connected.push(player.address);
@@ -62,6 +67,9 @@ export default class GameController {
                 break;
             }
         }
+    }
+    getBounties(): [string, number][] {
+        return Array.from(this.bounties).sort((a, b) => b[1] - a[1]);
     }
     getLeaderboard() {
         const data: { player: Player, address: string, points: number; }[] =

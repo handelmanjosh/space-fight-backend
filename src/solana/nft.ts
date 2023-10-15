@@ -69,6 +69,7 @@ export async function createNFT(src: string, to: string, metadata: NFTMetadata, 
     //     nftOrSft: nft,
     //     toOwner: new PublicKey(to),
     // });
+    console.log(to);
     await metaplex.nfts().transfer({
         nftOrSft: nft,
         toOwner: new PublicKey(to),

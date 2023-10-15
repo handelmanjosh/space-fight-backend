@@ -94,16 +94,20 @@ export async function sendToken(mint: string, address: string, amount: number) {
     console.log(`Signature: ${signature}`);
 }
 export async function sendSol(address: string, amount: number) {
-    const transaction = new Transaction();
-    transaction.add(
-        SystemProgram.transfer({
-            fromPubkey: admin.publicKey,
-            toPubkey: new PublicKey(address),
-            lamports: LAMPORTS_PER_SOL * amount,
-        }),
-    );
-    const signature = await sendAndConfirmTransaction(connection, transaction, [admin]);
-    return signature;
+    try {
+        const transaction = new Transaction();
+        transaction.add(
+            SystemProgram.transfer({
+                fromPubkey: admin.publicKey,
+                toPubkey: new PublicKey(address),
+                lamports: LAMPORTS_PER_SOL * amount,
+            }),
+        );
+        const signature = await sendAndConfirmTransaction(connection, transaction, [admin]);
+        return signature;
+    } catch (e) {
+        console.error(e);
+    }
 }
 export async function getAllPowerUps(address: string): Promise<Map<string, number>> {
     const pubkey = new PublicKey(address);
