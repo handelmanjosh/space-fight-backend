@@ -22,7 +22,7 @@ const io = new Server(httpServer, {
     }
 });
 
-const port = 3005;
+const port = Number(process.env.PORT) || 3000;
 
 export const connection = new Connection(clusterApiUrl("devnet"));
 export const mypubkey = "9gMXPu1JdmREs4CkkY1KGtW42tRhxgGHSKcSxf9chuhT";
